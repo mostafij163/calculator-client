@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Paper, Typography, Pagination, TextField } from "@mui/material";
+import { Button, Typography, Pagination, TextField } from "@mui/material";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -8,6 +8,7 @@ import {
 } from "@dnd-kit/sortable";
 import Result from "../../components/Result";
 import ResultContainer from "../../components/ResultContainer";
+import FileUpload from "../../components/FileUpload";
 
 const Home = () => {
   const [results, setResults] = useState([
@@ -30,6 +31,8 @@ const Home = () => {
       index: 2,
     },
   ]);
+  const [showFile, setShowFile] = useState(false);
+  const [file, setFile] = useState("");
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -57,23 +60,68 @@ const Home = () => {
     }
   };
 
+  const onFileUpload = (event) => {
+    if (event.target.files !== null && event.target?.files?.length > 0) {
+      setShowFile(true);
+      setFile(URL.createObjectURL(event.target.files[0]));
+    }
+  };
+
+  const onFileDrop = (event) => {
+    setShowFile(true);
+    setFile(URL.createObjectURL(event.dataTransfer.files[0]));
+  };
+
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <ResultContainer variant="outlined" sx={{}}>
-        <Typography variant="h4">Total results: 10</Typography>
-        <SortableContext items={results} strategy={verticalListSortingStrategy}>
-          {results.map((result) => (
-            <Result result={result} key={result.id} />
-          ))}
-        </SortableContext>
-        <Pagination
-          count={10}
-          color="primary"
-          sx={{ width: "fit-content", marginLeft: "auto" }}
-        />
+        <section style={{ marginBottom: "4rem" }}>
+          <Typography variant="h4">Total results: 10</Typography>
+          <SortableContext
+            items={results}
+            strategy={verticalListSortingStrategy}
+          >
+            {results.map((result) => (
+              <Result result={result} key={result.id} />
+            ))}
+          </SortableContext>
+          <Pagination
+            count={10}
+            color="primary"
+            sx={{ width: "fit-content", marginLeft: "auto" }}
+          />
+        </section>
 
         <Typography variant="h5">Input your text file</Typography>
-        <TextField label="Title" placeholder="Input your calculation title" />
+        <TextField
+          fullWidth
+          size="small"
+          label="Title"
+          placeholder="Input your calculation title"
+          sx={{
+            margin: ".875rem 0",
+            "& .MuiInputBase-root": {
+              borderRadius: "12px",
+            },
+          }}
+        />
+        <FileUpload
+          accept="text/plain"
+          onChange={onFileUpload}
+          onDrop={onFileDrop}
+          showFile={showFile}
+        />
+        <Button
+          variant="contained"
+          sx={{
+            width: "100%",
+            textTransform: "capitalize",
+            boxShadow: "rgba(0, 0, 0, 0.04) 0px 3px 5px",
+            marginTop: ".875rem",
+          }}
+        >
+          Calculate
+        </Button>
       </ResultContainer>
     </DndContext>
   );
