@@ -47,7 +47,7 @@ const Calculation = ({
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <section style={{ marginBottom: "4rem" }}>
-        <Typography variant="h4">Total results: {results.length}</Typography>
+        <Typography variant="h4">Total results: {results?.length}</Typography>
         <SortableContext items={results} strategy={verticalListSortingStrategy}>
           {paginatedResult.map((result) => (
             <Result result={result} key={result.id} />

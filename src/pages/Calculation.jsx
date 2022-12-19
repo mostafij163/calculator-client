@@ -6,7 +6,7 @@ import { calculatorApi } from "../api";
 import ResultContainer from "../components/ResultContainer";
 
 const sortByIndex = (results) => {
-  return results.sort((firstResult, secondResult) => {
+  return results?.sort((firstResult, secondResult) => {
     if (firstResult?.index > secondResult?.index) return 1;
     else if (firstResult?.index < secondResult?.index) return -1;
     else return 0;
