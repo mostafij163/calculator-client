@@ -1,6 +1,7 @@
 import { Button, Paper, Typography, Grid } from "@mui/material";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import * as FileSaver from "file-saver";
 
 const paperStyle = {
   margin: "1rem 0",
@@ -25,28 +26,37 @@ const Result = ({ result }) => {
     transition,
   };
 
+  const saveFile = () => {
+    const blob = new Blob([result?.file], { type: "text/plain;charset=utf-8" });
+    console.log(blob);
+
+    FileSaver.saveAs(blob, `${result?.title}.txt`);
+  };
+
   return (
-    <Paper
-      elevation={1}
-      sx={{ ...paperStyle }}
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
-      <Grid container alignItems="center" justifyContent="space-between">
-        <Grid item xs={7} md={9}>
-          <Typography variant="subtitle">
-            ={result?.total} {result?.title}
-          </Typography>
+    <>
+      <Paper
+        elevation={1}
+        sx={{ ...paperStyle }}
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+      >
+        <Grid container alignItems="center" justifyContent="space-between">
+          <Grid item xs={7} md={9}>
+            <Typography variant="subtitle">
+              ={result?.result} {result?.title}
+            </Typography>
+          </Grid>
+          <Grid item xs={5} md={3}>
+            <Button sx={{ ...btnStyle }} variant="contained" onClick={saveFile}>
+              See Input
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={5} md={3}>
-          <Button sx={{ ...btnStyle }} variant="contained">
-            See Input
-          </Button>
-        </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
+    </>
   );
 };
 
