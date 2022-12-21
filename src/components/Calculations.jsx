@@ -1,12 +1,13 @@
+import { useContext, useEffect } from "react";
 import { Typography, Pagination } from "@mui/material";
-import Result from "./Result";
-
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import Result from "./Result";
+import { socketContext } from "../context/socket";
 
 const Calculation = ({
   results,
@@ -16,9 +17,23 @@ const Calculation = ({
   page,
   perPage,
 }) => {
+  const { reordered, socket } = useContext(socketContext);
   const handleChange = (_event, value) => {
     setPage(value);
   };
+
+  useEffect(() => {
+    if (reordered) {
+      const reroderedResults = results.map((result) => {
+        if (reordered[result.id] !== undefined) {
+          result.index = reordered[result.id];
+        }
+        return result;
+      });
+
+      dispatchResults(reroderedResults);
+    }
+  }, [reordered]);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -39,6 +54,17 @@ const Calculation = ({
 
       reorderedArray[newActiveIndex].index = newActiveIndex;
       reorderedArray[newOverIndex].index = newOverIndex;
+
+      socket.emit("reorder", [
+        {
+          id: active.id,
+          index: newActiveIndex,
+        },
+        {
+          id: over.id,
+          index: newOverIndex,
+        },
+      ]);
 
       dispatchResults(reorderedArray);
     }
